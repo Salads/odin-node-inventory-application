@@ -1,15 +1,18 @@
 const dbPool = require("./DBPool");
 const fs = require("node:fs");
+const path = require("path");
 
+process.stdout.write("\tLoading SQL Scripts... ");
 const SQL = {
-	CreateTables: fs.readFileSync("./SQLScripts/CreateTables.pgsql"),
-	AddNewProductWithGenre: fs.readFileSync("./SQLScripts/NewProductWithGenres.pgsql"),
-	AddDevsForProduct: fs.readFileSync("./SQLScripts/AddDevsForProduct.pgsql"),
-	SetStockForProduct: fs.readFileSync("./SQLScripts/SetStockForProduct.pgsql"),
-	GetAllProducts: fs.readFileSync("./SQLScripts/GetAllProducts.pgsql"),
-	GetProductsByDev: fs.readFileSync("./SQLScripts/GetProductsByDeveloper.pgsql"),
-	GetProductsByGenre: fs.readFileSync("./SQLScripts/GetProductsByGenre.pgsql")
+	CreateTables: fs.readFileSync(path.join(__dirname, "SQLScripts", "CreateTables.pgsql")),
+	AddNewProductWithGenre: fs.readFileSync(path.join(__dirname, "SQLScripts", "NewProductWithGenres.pgsql")),
+	AddDevsForProduct: fs.readFileSync(path.join(__dirname, "SQLScripts", "AddDevsForProduct.pgsql")),
+	SetStockForProduct: fs.readFileSync(path.join(__dirname, "SQLScripts", "SetStockForProduct.pgsql")),
+	GetAllProducts: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetAllProducts.pgsql")),
+	GetProductsByDev: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetProductsByDeveloper.pgsql")),
+	GetProductsByGenre: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetProductsByGenre.pgsql"))
 };
+process.stdout.write("Done\n");
 
 const inventoryModel = {
 	initializeDB: async () => {
