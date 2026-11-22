@@ -7,6 +7,7 @@ WITH product_ids_with_developer AS (
 	WHERE d.developer = $1::text
 )
 SELECT 
+	p.id,
 	p.title, 
 	(
 		SELECT COALESCE(array_agg(g.genre ORDER BY g.genre), ARRAY[]::text[])

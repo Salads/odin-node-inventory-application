@@ -3,6 +3,7 @@
 -- Including title, genre(s), developer(s), stock
 
 SELECT 
+	p.id,
 	p.title, 
 	(
 		SELECT COALESCE(array_agg(g.genre ORDER BY g.genre), ARRAY[]::text[])
