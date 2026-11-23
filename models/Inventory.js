@@ -9,8 +9,9 @@ const SQL = {
 	AddDevsForProduct: fs.readFileSync(path.join(__dirname, "SQLScripts", "AddDevsForProduct.pgsql")),
 	SetStockForProduct: fs.readFileSync(path.join(__dirname, "SQLScripts", "SetStockForProduct.pgsql")),
 	GetAllProducts: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetAllProducts.pgsql")),
-	GetProductsByDev: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetProductsByDeveloper.pgsql")),
-	GetProductsByGenre: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetProductsByGenre.pgsql"))
+	GetProductsWithParams: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetProductsByParams.pgsql")),
+	GetGenres: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetGenres.pgsql")),
+	GetDevelopers: fs.readFileSync(path.join(__dirname, "SQLScripts", "GetDevelopers.pgsql")),
 };
 process.stdout.write("Done\n");
 
@@ -83,12 +84,13 @@ const inventoryModel = {
 		return result;
 	},
 
-	getProductsByDeveloper: async (developer) => {
+	getProductsWithParams: async (title, developer_ids, genre_ids) => {
 		const client = await dbPool.connect();
 		let result = null;
 		try {
 			await client.query("BEGIN");
-			result = await client.query(SQL.GetProductsByDev, [developer]);
+			result = await client.query(SQL.GetProductsWithParams, 
+				[title, developer_ids, genre_ids]);
 			await client.query("COMMIT");
 		}
 		catch {
@@ -101,12 +103,23 @@ const inventoryModel = {
 		return result;
 	},
 
-	getProductsByGenre: async (genre) => {
+	// Provides the information for the "select" list on search parameters.
+	getCurrentGenresAndDevelopers: async () => {
 		const client = await dbPool.connect();
-		let result = null;
+		let result = { genres: [], developers: [] };
 		try {
 			await client.query("BEGIN");
-			result = await client.query(SQL.GetProductsByGenre, [genre]);
+
+			result = await client.query(SQL.GetGenres);
+			for(let row of result.rows) {
+				genres.push({ id: row.id, label: row.genre });
+			}
+
+			result = await client.query(SQL.GetDevelopers);
+			for(let row of result.rows) {
+				genres.push({ id: row.id, label: row.developer });
+			}
+
 			await client.query("COMMIT");
 		}
 		catch {
@@ -117,7 +130,7 @@ const inventoryModel = {
 		}
 
 		return result;
-	}
+	},
 };
 
 module.exports = inventoryModel;
